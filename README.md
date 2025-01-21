@@ -6,6 +6,9 @@ The library is described in:
 
 Ferrone, A., Billault-Roux, A.-C., and Berne, A.: ERUO: a spectral processing routine for the Micro Rain Radar PRO (MRR-PRO), Atmos. Meas. Tech., 15, 3569–3592, https://doi.org/10.5194/amt-15-3569-2022, 2022
 
+## Note for use at LTE lab (after fork on 2025-01-21)
+**TO DO next time ERUO is used**: check a scatterplot of the Z estimated by ERUO versus the original Metek one. If there is any radical difference, contact Alfonso Ferrone to check the code (tiny doubt that there may be a leftover of the wrong computation of the noise floor that was corrected during revision)
+
 ## Description
 
 This library has a two-fold objective:
