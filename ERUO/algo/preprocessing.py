@@ -81,6 +81,8 @@ def load_dataset(ini_path, subfolder_structure, verbose=False):
     ----------
     ini_path : str
         Full path to the folder at the root of the folder tree containing all measurement files.
+    subfolder_structure : str
+        structure of the subfolders of the files. Eg. '%Y%m/%Y%m%d/' for the metek default subfolder structure YYYYMM/YYYYMMDD/
     verbose : bool
         Flag to specify whether the number of all files found should be displayed.
 
