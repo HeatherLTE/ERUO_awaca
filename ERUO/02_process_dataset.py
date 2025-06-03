@@ -35,12 +35,13 @@ def main():
     #Reading configuration
     config_fpath = "config.ini"
     with open(config_fpath) as fp:
-        config_object = ConfigParser()
+        config_object = ConfigParser(interpolation=None)
         config_object.read_file(fp)
 
     # Directories
     path_info = config_object['PATHS']
     dir_input_netcdf = path_info['dir_input_netcdf']
+    subfolder_structure = path_info['subfolder_structure']
     dir_npy = path_info['dir_npy']
     dir_proc_netcdf = path_info['dir_proc_netcdf']
     fname_border_correction = path_info['fname_border_correction']
@@ -200,7 +201,7 @@ def main():
         print('---------------------------------------------------------------------------------\n')
 
     # Finding files to process
-    all_files = preprocessing.load_dataset(dir_input_netcdf, verbose=VERBOSE)
+    all_files = preprocessing.load_dataset(dir_input_netcdf, subfolder_structure, verbose=VERBOSE)
 
     # Debugging help:
     # - In case you want to skip some files at the beginning (example: already processed ones)
@@ -230,7 +231,7 @@ def main():
     if PARALLELIZATION:
         # Defining a function with only 1 input
         def process_file_par(in_fpath):
-            return processing.process_file(in_fpath, border_corr, interf_mask, 
+            return processing.process_file(in_fpath, subfolder_structure, border_corr, interf_mask, 
                                            spectrum_varname, dir_proc_netcdf,
                                            smooth_median_spec=reconstructed_median,
                                            out_fname_prefix=out_fname_prefix,
@@ -245,7 +246,7 @@ def main():
                 print('%d/%d: %s' % (i_f, len(all_files), os.path.basename(in_fpath)))
                 
             # Launching the processing of a single file (which in turn contains several spectra)
-            processing.process_file(in_fpath, border_corr, interf_mask,
+            processing.process_file(in_fpath, subfolder_structure, border_corr, interf_mask,
                                     spectrum_varname, dir_proc_netcdf,
                                     smooth_median_spec=reconstructed_median,
                                     out_fname_prefix=out_fname_prefix,

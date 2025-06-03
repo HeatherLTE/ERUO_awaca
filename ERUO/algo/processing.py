@@ -968,7 +968,7 @@ def process_single_spectrum(spec, v_0_3, r, m, v_ny, d_r, transfer_function_x3,
     return spectrum_params_dBZ
 
 
-def process_file(in_fpath, border_correction, interference_mask, spectrum_varname, dir_proc_netcdf,
+def process_file(in_fpath, subfolder_structure, border_correction, interference_mask, spectrum_varname, dir_proc_netcdf,
                  smooth_median_spec, out_fname_prefix=None,
                  max_num_spectra_to_process=None, verbose=False):
     '''
@@ -985,6 +985,8 @@ def process_file(in_fpath, border_correction, interference_mask, spectrum_varnam
     ----------
     in_fpath : str
         Full path to the "raw" netCDF file to process.
+    subfolder_structure : str
+        structure of the subfolders of the files. Eg. '%Y%m/%Y%m%d/' for the metek default subfolder structure YYYYMM/YYYYMMDD/ 
     border_correction : numpy array (2D, float or equivalent)
         Numpy array (2D) containing the correction for the values at the min and max velocity limits
         of the spectrum. (dimensions: range, velocity)
@@ -1210,8 +1212,12 @@ def process_file(in_fpath, border_correction, interference_mask, spectrum_varnam
     # 5. Saving to file
     # Defining output filepath
     out_fname = out_fname_prefix + os.path.basename(in_fpath)
+    
+    # extracting date from in_fpath file name for output subfolders
+    # this relies on the files having the default metek file names
+    fdate = datetime.datetime.strptime(os.path.basename(in_fpath)[0:8], '%Y%m%d')
 
-    out_fdir = os.path.join(dir_proc_netcdf, os.sep.join(in_fpath.split(os.sep)[-3:-1]))
+    out_fdir = os.path.join(dir_proc_netcdf, fdate.strftime(subfolder_structure))
     if not os.path.exists(out_fdir):
         os.makedirs(out_fdir)
 
