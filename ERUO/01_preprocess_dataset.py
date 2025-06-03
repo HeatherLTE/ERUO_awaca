@@ -71,12 +71,13 @@ def main():
     #Reading configuration
     config_fpath = "config.ini"
     with open(config_fpath) as fp:
-        config_object = ConfigParser()
+        config_object = ConfigParser(interpolation=None)
         config_object.read_file(fp)
 
     # Directories
     path_info = config_object['PATHS']
     dir_input_netcdf = path_info['dir_input_netcdf']
+    subfolder_structure = path_info['subfolder_structure']
     dir_npy_out = path_info['dir_npy']
     fname_interference_mask = path_info['fname_interference_mask']
     fname_border_correction = path_info['fname_border_correction']
@@ -174,7 +175,7 @@ def main():
     # Checking if file already exists
     if (not os.path.isfile(quantiles_out_fpath)) or REGENERATE_QUANTILE_ARCHIVE:
         # Finding files to process
-        all_files = preprocessing.load_dataset(dir_input_netcdf, verbose=VERBOSE)
+        all_files = preprocessing.load_dataset(dir_input_netcdf, subfolder_structure, verbose=VERBOSE)
         if not len(all_files):
             print('No files found, quitting preprocessing.')
             return 1
