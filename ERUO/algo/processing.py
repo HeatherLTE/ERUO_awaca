@@ -1225,4 +1225,5 @@ def process_file(in_fpath, subfolder_structure, border_correction, interference_
 
     # Exporting to netCDF4
     ds.to_netcdf(out_fpath, mode='w', unlimited_dims='time')
+    ds.close()
 
