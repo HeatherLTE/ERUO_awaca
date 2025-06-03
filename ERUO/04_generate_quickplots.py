@@ -42,12 +42,13 @@ def main():
     # Reading configuration
     config_fpath = "config.ini"
     with open(config_fpath) as fp:
-        config_object = ConfigParser()
+        config_object = ConfigParser(interpolation=None)
         config_object.read_file(fp)
 
     # Directories
     path_info = config_object['PATHS']
     dir_input_netcdf = path_info['dir_input_netcdf']
+    subfolder_structure = path_info['subfolder_structure']
     dir_proc_netcdf = path_info['dir_proc_netcdf']
     dir_postproc_netcdf = path_info['dir_postproc_netcdf']
     dir_quickplots = path_info['dir_quickplots']
@@ -79,7 +80,7 @@ def main():
 
     if QUICKPLOT_PROCESSED:
         # Finding files to process
-        all_files_proc = preprocessing.load_dataset(dir_proc_netcdf, verbose=VERBOSE)
+        all_files_proc = preprocessing.load_dataset(dir_proc_netcdf, subfolder_structure, verbose=VERBOSE)
 
         for in_fpath in all_files_proc:
             out_quickplot_fname = os.path.basename(in_fpath).split('.')[0] + '.png'
@@ -88,7 +89,7 @@ def main():
 
     if QUICKPLOT_POSTPROCESSED:
         # Finding files to process
-        all_files_postproc = preprocessing.load_dataset(dir_postproc_netcdf, verbose=VERBOSE)
+        all_files_postproc = preprocessing.load_dataset(dir_postproc_netcdf, subfolder_structure, verbose=VERBOSE)
 
         for in_fpath in all_files_postproc:
             out_quickplot_fname = os.path.basename(in_fpath).split('.')[0] + '.png'
