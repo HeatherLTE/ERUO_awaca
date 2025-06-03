@@ -204,7 +204,7 @@ def identify_isolated_artifacts_2d(zea_post, to_remove):
     return to_remove
 
 
-def postprocess_file(in_fpath, dir_postproc_netcdf, out_fname_suffix):
+def postprocess_file(in_fpath, subfolder_structure, dir_postproc_netcdf, out_fname_prefix, out_fname_suffix):
     '''
     Function to postprocess a single "raw" netCDF MRR file.
 
@@ -212,7 +212,10 @@ def postprocess_file(in_fpath, dir_postproc_netcdf, out_fname_suffix):
     Parameters
     ----------
     in_fpath : str
-        Full path to the "raw" netCDF file to process.
+        Full path to the netcdf file produced by the ERUO step 02 processing.
+    subfolder_structure : str
+        structure of the subfolders of the files. Eg. '%Y%m/%Y%m%d/' for the metek default subfolder structure YYYYMM/YYYYMMDD/ 
+   
     '''
     # Load netCDF file
     r, t, zea, vel, s_w, snr, noise_level, noise_floor = load_mrr_variables(in_fpath)
@@ -303,8 +306,13 @@ def postprocess_file(in_fpath, dir_postproc_netcdf, out_fname_suffix):
     # 5. Saving to file
     # Defining output filepath
     out_fname = os.path.basename(in_fpath).split('.')[0] + out_fname_suffix + '.nc'
+    
+    # extracting date from in_fpath file name for output subfolders
+    # this relies on the original files having the default metek file names
+    fdate = datetime.datetime.strptime(os.path.basename(in_fpath).removeprefix(out_fname_prefix)[0:8], '%Y%m%d')
 
-    out_fdir = os.path.join(dir_postproc_netcdf, os.sep.join(in_fpath.split(os.sep)[-3:-1]))
+    out_fdir = os.path.join(dir_postproc_netcdf, fdate.strftime(subfolder_structure))
+   
     if not os.path.exists(out_fdir):
         os.makedirs(out_fdir)
 
@@ -315,3 +323,4 @@ def postprocess_file(in_fpath, dir_postproc_netcdf, out_fname_suffix):
 
     # Exporting to netCDF4
     ds.to_netcdf(out_fpath, mode='w', unlimited_dims='time')
+    ds.close()

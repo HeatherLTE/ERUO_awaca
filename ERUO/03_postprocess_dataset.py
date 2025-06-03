@@ -35,12 +35,14 @@ def main():
     #Reading configuration
     config_fpath = "config.ini"
     with open(config_fpath) as fp:
-        config_object = ConfigParser()
+        config_object = ConfigParser(interpolation=None)
         config_object.read_file(fp)
 
     # Directories
     path_info = config_object['PATHS']
+    subfolder_structure = path_info['subfolder_structure']
     dir_proc_netcdf = path_info['dir_proc_netcdf']
+    out_fname_prefix = path_info['OUT_FNAME_PREFIX'] #prefix on the processed files
     dir_postproc_netcdf = path_info['dir_postproc_netcdf']
     out_postprocessed_suffix = path_info['OUT_POSTPROCESSED_SUFFIX']
 
@@ -102,7 +104,7 @@ def main():
 
 
     # Finding files to postprocess
-    all_files = preprocessing.load_dataset(dir_proc_netcdf, verbose=VERBOSE)
+    all_files = preprocessing.load_dataset(dir_proc_netcdf, subfolder_structure, verbose=VERBOSE)
 
     # Debugging help:
     # - In case you want to skip some files at the beginning (example: already processed ones)
@@ -113,7 +115,7 @@ def main():
     for i_f, curr_fpath in enumerate(all_files):
         if VERBOSE and not (i_f % PRINT_EVERY_N):
             print('%d/%d: %s' % (i_f, len(all_files), os.path.basename(curr_fpath)))
-        postprocessing.postprocess_file(curr_fpath, dir_postproc_netcdf, out_postprocessed_suffix)
+        postprocessing.postprocess_file(curr_fpath, subfolder_structure, dir_postproc_netcdf, out_fname_prefix, out_postprocessed_suffix)
   
 
 if __name__ == '__main__':
